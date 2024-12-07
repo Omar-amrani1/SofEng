@@ -6,7 +6,7 @@ In a console, run
 
 >npm install mysql2
 
-Get the relevant repository or installer from "https://dev.mysql.com/doc/mysql-getting-started/en/"
+Get the relevant repository or installer from "https://dev.mysql.com/downloads/" (Refer to "https://dev.mysql.com/doc/mysql-getting-started/en/" to identify which one to use)
 
 Create 'hss_smart_rentals' database (empty)
 
