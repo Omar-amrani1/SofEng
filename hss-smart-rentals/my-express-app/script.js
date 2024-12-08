@@ -101,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Placeholder for viewing property details
+// View details for property
 function viewDetails(propertyId) {
-    alert(`Viewing details for property ID: ${propertyId}`);
-    // You can redirect or open a new page for property details here
-    // For example: window.location.href = `/property-details.html?id=${propertyId}`;
+    // alert(`Viewing details for property ID: ${propertyId}`);
+    window.location.href = '/property-details.html?id=${propertyId}';
 }
+
