@@ -17,3 +17,12 @@ Restore the included dump with
 (use the password you setup MySql with)
 
 If you used a different password or using a separate user, change credentials used in app.js
+
+
+### Things that I haven't started doing yet
+
+Mess around with "styles.css" to make pages look nicer (may need to add html containers for layout styling)
+
+Replace sent password with SHA-256 hash in script.js ; Add table in sql for storing hash to compare
+
+Create the 'landlord_property' table mentioned in the EDR ; Branch from logon script ('/login' fetch in script.js) depending on if landlord or regular user
