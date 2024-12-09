@@ -107,3 +107,47 @@ app.listen(port, () => {
 
 
 
+// Fetch property device details
+app.get('/propertydetail_device', (req, res) => {
+    const { location } = req.query;
+
+    let query = `
+        select description, benefits from property
+        LEFT JOIN property_ssh_device on property.property_id = property_ssh_device.property_id
+        LEFT JOIN ssh_device on property_ssh_device.device_id = ssh_device.device_id
+        WHERE property_id = ?
+    `;
+    queryParams.push(location);
+
+    const queryParams = [];
+    query += ' GROUP BY ssh_device.device_id';
+    db.query(query, queryParams, (err, results) => {
+        if (err) {
+            console.error('Error fetching device details:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching device details' });
+        }
+        res.json(results); // Send filtered data as JSON
+    });
+});
+
+// Fetch property room details (specifically the number of available rooms)
+app.get('/propertydetail_room', (req, res) => {
+    const { landlord_id } = req.query;
+
+    let query = `select property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) from property
+                    LEFT JOIN room on property.property_id = room.property_id
+                    where (status = "available") and (property.property_id = ?)
+    `;
+    queryParams.push(location);
+
+    const queryParams = [];
+
+    db.query(query, queryParams, (err, results) => {
+        if (err) {
+            console.error('Error fetching room availability:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching room availability' });
+        }
+        res.json(results); // Send filtered data as JSON
+    });
+});
+
