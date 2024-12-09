@@ -117,9 +117,9 @@ app.get('/propertydetail_device', (req, res) => {
         LEFT JOIN ssh_device on property_ssh_device.device_id = ssh_device.device_id
         WHERE property_id = ?
     `;
-    queryParams.push(location);
 
     const queryParams = [];
+    queryParams.push(location);
     query += ' GROUP BY ssh_device.device_id';
     db.query(query, queryParams, (err, results) => {
         if (err) {
@@ -138,9 +138,9 @@ app.get('/propertydetail_room', (req, res) => {
                     LEFT JOIN room on property.property_id = room.property_id
                     where (status = "available") and (property.property_id = ?)
     `;
-    queryParams.push(location);
 
     const queryParams = [];
+    queryParams.push(location);
 
     db.query(query, queryParams, (err, results) => {
         if (err) {
