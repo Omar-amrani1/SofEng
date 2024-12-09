@@ -134,13 +134,14 @@ app.get('/propertydetail_device', (req, res) => {
 app.get('/propertydetail_room', (req, res) => {
     const { location } = req.query;
 
-    let query = `select property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) as available from property
-                    LEFT JOIN room on property.property_id = room.property_id
-                    where (status = "available") and (property.property_id = ?)
+    let query = `SELECT property.property_id,property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) AS available FROM property
+                 LEFT JOIN room ON property.property_id = room.property_id
+                 WHERE (status = "available")
+                 GROUP BY property.property_id
     `;
 
     const queryParams = [];
-    queryParams.push(location);
+    //queryParams.push(location); -Singular queries keep returning non-error nulls. Filter on client instead.
 
     db.query(query, queryParams, (err, results) => {
         if (err) {
