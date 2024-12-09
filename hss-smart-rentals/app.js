@@ -134,7 +134,7 @@ app.get('/propertydetail_device', (req, res) => {
 app.get('/propertydetail_room', (req, res) => {
     const { landlord_id } = req.query;
 
-    let query = `select property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) from property
+    let query = `select property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) as available from property
                     LEFT JOIN room on property.property_id = room.property_id
                     where (status = "available") and (property.property_id = ?)
     `;
