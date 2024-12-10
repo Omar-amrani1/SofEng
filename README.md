@@ -2,7 +2,7 @@
 
 The tables "availability" and "room" do the same thing. I've used the room table for checking and changing status, but this can be amended if anyone wishes
 
-Remember to create the room_application table if testing the application functions in property-details.html
+Remember to create the room_application table if testing the application functions in property-details.html (in testing sql folder)
 
 
 
