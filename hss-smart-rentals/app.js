@@ -107,3 +107,48 @@ app.listen(port, () => {
 
 
 
+// Fetch property device details
+app.get('/propertydetail_device', (req, res) => {
+    const { location } = req.query;
+
+    let query = `
+        select description, benefits from property
+        LEFT JOIN property_ssh_device on property.property_id = property_ssh_device.property_id
+        LEFT JOIN ssh_device on property_ssh_device.device_id = ssh_device.device_id
+        WHERE property_id = ?
+    `;
+
+    const queryParams = [];
+    queryParams.push(location);
+    query += ' GROUP BY ssh_device.device_id';
+    db.query(query, queryParams, (err, results) => {
+        if (err) {
+            console.error('Error fetching device details:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching device details' });
+        }
+        res.json(results); // Send filtered data as JSON
+    });
+});
+
+// Fetch property room details (specifically the number of available rooms)
+app.get('/propertydetail_room', (req, res) => {
+    const { location } = req.query;
+
+    let query = `SELECT property.property_id,property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) AS available FROM property
+                 LEFT JOIN room ON property.property_id = room.property_id
+                 WHERE (status = "available")
+                 GROUP BY property.property_id
+    `;
+
+    const queryParams = [];
+    //queryParams.push(location); -Singular queries keep returning non-error nulls. Filter on client instead.
+
+    db.query(query, queryParams, (err, results) => {
+        if (err) {
+            console.error('Error fetching room availability:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching room availability' });
+        }
+        res.json(results); // Send filtered data as JSON
+    });
+});
+
