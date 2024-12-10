@@ -127,13 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error fetching details:', error));
     };
 
-    const pushRequest = (propertyId = '') => {
-        /*
-        */
-    };
-
-    fetchOverviewDetails(propertyId);
-    fetchDeviceDetails(propertyId);
-    fetchRoomDetails(propertyId);
-
 });
+
+function pushRequest(roomId = '') {
+    const params = new URLSearchParams(window.location.search)
+    const userId = params.get("user")
+    const propertyId = params.get("id")
+
+    if (userId == null || userId == "null") {
+        alert("Please login to apply for a room")
+        window.location.href = `/login.html`;
+    }
+    else {
+        const proceed = confirm(`Are you sure you want to apply for room ${roomId}?`)
+        if (proceed) {
+            /**/
+        }
+    }
+};
