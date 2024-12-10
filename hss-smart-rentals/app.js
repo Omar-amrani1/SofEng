@@ -43,7 +43,7 @@ app.post('/register', (req, res) => {
             if (err) {
                 return res.status(500).json({ success: false, message: 'Error registering user' });
             }
-            res.redirect('/login.html');
+            res.redirect(`/home.html`);
         });
     });
 });
@@ -59,7 +59,7 @@ app.post('/login', (req, res) => {
         if (results.length === 0) {
             return res.status(400).json({ success: false, message: 'Invalid email or password' });
         }
-        res.redirect('/home.html');
+        res.redirect(`/home.html?user=${results[0].user_id}`);
     });
 });
 
