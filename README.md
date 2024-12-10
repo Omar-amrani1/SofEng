@@ -1,3 +1,9 @@
+## Notes
+
+The tables "availability" and "room" do the same thing. I've used the room table for checking and changing status, but this can be aended if anyone wishes
+
+
+
 ### Basic notes for running
 
 Get "https://nodejs.org/en/"
