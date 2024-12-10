@@ -104,11 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // View details for property
 function viewDetails(propertyId,userId=-1) {
     const params = new URLSearchParams(window.location.search)
-    const userId = params.get("user") //Id is string
-    if (propertyId == "null") {
-        window.location.href = `/property-details.html?id=${propertyId}`;
-    } else {
-        window.location.href = `/property-details.html?id=${propertyId}&user=${userId}`;
-    };
+    const userId = params.get("user")
+    window.location.href = `/property-details.html?id=${propertyId}&user=${userId}`;
+    //User is "null" if not used
 }
 
