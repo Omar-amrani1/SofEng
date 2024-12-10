@@ -141,7 +141,19 @@ function pushRequest(roomId = '') {
     else {
         const proceed = confirm(`Are you sure you want to apply for room ${roomId}?`)
         if (proceed) {
-            /**/
+
+            fetch(`/add_application?userId=${userId}&roomId=${roomId}&propertyId=${propertyId}`)
+                .then(response => response.json())
+                .then(properties => {
+                    if (properties.success == false) {
+                        alert("Application failed.");
+                    } else {
+                        alert("Application success.");
+                    }
+                })
+                .catch(error => console.error('Error fetching details:', error));
+
+            //window.location.href = `/home.html?user=${userId}`;
         }
     }
 };
