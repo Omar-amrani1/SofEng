@@ -177,3 +177,49 @@ app.get('/propertydetail_overview', (req, res) => {
     });
 });
 
+// Push room application request 
+app.get('/add_application', (req, res) => {
+    const { userId, roomId, propertyId } = req.query;
+
+    let query1 = `INSERT INTO room_application (room_id,property_id,user_id)
+                  VALUES (?,?,?);
+    `;
+
+    let query2 = `UPDATE room SET status = "not available" 
+                  WHERE (room_id = ?) AND (property_id = ?);
+    `;
+
+    const queryParams1 = [];
+    queryParams1.push(roomId);
+    queryParams1.push(propertyId);
+    queryParams1.push(userId);
+
+    const queryParams2 = [];
+    queryParams2.push(roomId);
+    queryParams2.push(propertyId);
+
+    let results1 = null;
+    let results2 = null;
+
+    db.query(query1, queryParams1, (err, results) => {
+        if (err) {
+            console.error('Error adding user application:', err);
+            return res.status(500).json({ success: false, message: 'Error adding user application' });
+        }
+        console.log(results)
+        results1 = results;
+    });
+
+    db.query(query2, queryParams2, (err, results) => {
+        if (err) {
+            console.error('Error adding user application:', err);
+            return res.status(500).json({ success: false, message: 'Error adding user application' });
+        }
+        console.log(results)
+        results2 = results;
+    });
+
+    combinedResults = [results1, results2]
+    res.json(combinedResults);
+
+});
