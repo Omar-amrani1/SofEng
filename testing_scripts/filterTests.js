@@ -1,7 +1,6 @@
 
 const assert = require('assert');
-const { filterProperties } = require('../my-express-app/script'); // Adjust path based on file structure
-
+const { filterProperties } = require('../my-express-app'); 
 // Mock data 
 const mockProperties = [
   { location: 'City A', price: 500, bedrooms: 3, bathrooms: 2, sshFeatures: ['Camera'] },
