@@ -102,8 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // View details for property
-function viewDetails(propertyId) {
-    // alert(`Viewing details for property ID: ${propertyId}`);
-    window.location.href = '/property-details.html?id=${propertyId}';
+function viewDetails(propertyId,userId=-1) {
+    const params = new URLSearchParams(window.location.search)
+    const userId = params.get("user")
+    window.location.href = `/property-details.html?id=${propertyId}&user=${userId}`;
+    //User is "null" if not used
 }
 

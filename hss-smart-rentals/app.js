@@ -43,7 +43,7 @@ app.post('/register', (req, res) => {
             if (err) {
                 return res.status(500).json({ success: false, message: 'Error registering user' });
             }
-            res.redirect('/login.html');
+            res.redirect(`/home.html`);
         });
     });
 });
@@ -59,7 +59,7 @@ app.post('/login', (req, res) => {
         if (results.length === 0) {
             return res.status(400).json({ success: false, message: 'Invalid email or password' });
         }
-        res.redirect('/home.html');
+        res.redirect(`/home.html?user=${results[0].user_id}`);
     });
 });
 
@@ -109,18 +109,18 @@ app.listen(port, () => {
 
 // Fetch property device details
 app.get('/propertydetail_device', (req, res) => {
-    const { location } = req.query;
+    const { id } = req.query;
 
     let query = `
-        select description, benefits from property
+        SELECT property.property_id, description, benefits
+        FROM property
         LEFT JOIN property_ssh_device on property.property_id = property_ssh_device.property_id
         LEFT JOIN ssh_device on property_ssh_device.device_id = ssh_device.device_id
-        WHERE property_id = ?
+        WHERE property.property_id = ?
     `;
 
     const queryParams = [];
-    queryParams.push(location);
-    query += ' GROUP BY ssh_device.device_id';
+    queryParams.push(id);
     db.query(query, queryParams, (err, results) => {
         if (err) {
             console.error('Error fetching device details:', err);
@@ -132,23 +132,94 @@ app.get('/propertydetail_device', (req, res) => {
 
 // Fetch property room details (specifically the number of available rooms)
 app.get('/propertydetail_room', (req, res) => {
-    const { location } = req.query;
+    const { id } = req.query;
 
-    let query = `SELECT property.property_id,property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) AS available FROM property
-                 LEFT JOIN room ON property.property_id = room.property_id
-                 WHERE (status = "available")
-                 GROUP BY property.property_id
+    let query = `SELECT property.property_id,room_id,status FROM property
+                LEFT JOIN room ON property.property_id = room.property_id
+                WHERE property.property_id = ?
     `;
 
     const queryParams = [];
-    //queryParams.push(location); -Singular queries keep returning non-error nulls. Filter on client instead.
+    queryParams.push(id);
 
+    console.log(query)
     db.query(query, queryParams, (err, results) => {
         if (err) {
             console.error('Error fetching room availability:', err);
             return res.status(500).json({ success: false, message: 'Error fetching room availability' });
         }
+        console.log(results)
         res.json(results); // Send filtered data as JSON
     });
 });
 
+// Fetch general property details
+app.get('/propertydetail_overview', (req, res) => {
+    const { id } = req.query;
+
+    let query = `SELECT property.property_id,property.location,property.price,property.bedrooms,property.bathrooms,COUNT(status) AS available FROM property
+                 LEFT JOIN room ON property.property_id = room.property_id
+                 WHERE (status = "available") AND (property.property_id = ?)
+                 GROUP BY property.property_id
+    `;
+
+    const queryParams = [];
+    queryParams.push(id);
+
+    console.log(query)
+    db.query(query, queryParams, (err, results) => {
+        if (err) {
+            console.error('Error fetching room availability:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching room availability' });
+        }
+        console.log(results)
+        res.json(results); // Send filtered data as JSON
+    });
+});
+
+// Push room application request 
+app.get('/add_application', (req, res) => {
+    const { userId, roomId, propertyId } = req.query;
+
+    let query1 = `INSERT INTO room_application (room_id,property_id,user_id)
+                  VALUES (?,?,?);
+    `;
+
+    let query2 = `UPDATE room SET status = "not available" 
+                  WHERE (room_id = ?) AND (property_id = ?);
+    `;
+
+    const queryParams1 = [];
+    queryParams1.push(roomId);
+    queryParams1.push(propertyId);
+    queryParams1.push(userId);
+
+    const queryParams2 = [];
+    queryParams2.push(roomId);
+    queryParams2.push(propertyId);
+
+    let results1 = null;
+    let results2 = null;
+
+    db.query(query1, queryParams1, (err, results) => {
+        if (err) {
+            console.error('Error adding user application:', err);
+            return res.status(500).json({ success: false, message: 'Error adding user application' });
+        }
+        console.log(results)
+        results1 = results;
+    });
+
+    db.query(query2, queryParams2, (err, results) => {
+        if (err) {
+            console.error('Error adding user application:', err);
+            return res.status(500).json({ success: false, message: 'Error adding user application' });
+        }
+        console.log(results)
+        results2 = results;
+    });
+
+    combinedResults = [results1, results2]
+    res.json(combinedResults);
+
+});
