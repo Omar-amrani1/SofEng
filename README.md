@@ -13,6 +13,7 @@ Get "https://nodejs.org/en/"
 In a console, run 
 
 >npm install mysql2
+>npm install express
 
 Get the relevant repository or installer from "https://dev.mysql.com/downloads/" (Refer to "https://dev.mysql.com/doc/mysql-getting-started/en/" to identify which one to use)
 
