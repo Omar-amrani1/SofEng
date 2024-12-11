@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Property</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Add New Property</h1>
+    <form id="add-property-form">
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required><br>
+
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="number" id="bedrooms" name="bedrooms" required><br>
+
+        <label for="bathrooms">Bathrooms:</label>
+        <input type="number" id="bathrooms" name="bathrooms" required><br>
+
+        <label for="ssh-features">SSH Features:</label>
+        <select id="ssh-features" name="ssh-features" multiple required>
+            <option value="SSH Hub">SSH Hub</option>
+            <option value="SSH Camera">SSH Camera</option>
+            <option value="SSH Console Table">SSH Console Table</option>
+        </select><br>
+
+        <button type="submit">Add Property</button>
+    </form>
+    <script src="add-property-script.js" defer></script>
+</body>
+</html>
+
+

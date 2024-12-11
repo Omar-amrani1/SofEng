@@ -223,3 +223,112 @@ app.get('/add_application', (req, res) => {
     res.json(combinedResults);
 
 });
+
+// Fetch properties owned by a landlord
+app.get('/owner-properties', (req, res) => {
+    const { user_id } = req.query;
+
+    const query = `
+        SELECT p.property_id, p.location, 
+        (SELECT COUNT(*) FROM availability WHERE property_id = p.property_id AND status = 'available') AS availableRooms
+        FROM property p
+        WHERE p.owner = ?
+    `;
+
+    db.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error('Error fetching properties for landlord:', err);
+            return res.status(500).json({ success: false, message: 'Error fetching properties' });
+        }
+        res.json(results);
+    });
+});
+
+
+
+// Add new property
+app.post('/add-property', (req, res) => {
+    const { location, price, bedrooms, bathrooms, sshFeatures } = req.body;
+    const ownerId = req.session.user.user_id;
+
+    if (!ownerId) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const propertyQuery = `
+        INSERT INTO property (location, price, bedrooms, bathrooms, owner, ssh_features)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    db.query(propertyQuery, [location, price, bedrooms, bathrooms, ownerId, sshFeatures.join(', ')], (err, result) => {
+        if (err) {
+            console.error('Error inserting property:', err);
+            return res.status(500).json({ success: false, message: 'Error inserting property' });
+        }
+
+        const propertyId = result.insertId;
+
+        // Insert SSH features into the property_ssh_device table
+        const sshFeatureQueries = sshFeatures.map(feature => {
+            const deviceId = feature === 'SSH Hub' ? 1 : feature === 'SSH Camera' ? 2 : 3;
+            return new Promise((resolve, reject) => {
+                db.query(
+                    'INSERT INTO property_ssh_device (property_id, device_id) VALUES (?, ?)',
+                    [propertyId, deviceId],
+                    (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    }
+                );
+            });
+        });
+
+        // Generate rooms and update availability table
+        const roomQueries = [];
+        for (let i = 1; i <= bedrooms; i++) {
+            roomQueries.push(
+                new Promise((resolve, reject) => {
+                    db.query(
+                        'INSERT INTO room (room_id, property_id, status) VALUES (?, ?, ?)',
+                        [i, propertyId, 'available'],
+                        (err) => {
+                            if (err) reject(err);
+                            else resolve();
+                        }
+                    );
+                })
+            );
+            roomQueries.push(
+                new Promise((resolve, reject) => {
+                    db.query(
+                        'INSERT INTO availability (room_id, property_id, status) VALUES (?, ?, ?)',
+                        [i, propertyId, 'available'],
+                        (err) => {
+                            if (err) reject(err);
+                            else resolve();
+                        }
+                    );
+                })
+            );
+        }
+
+        Promise.all([...sshFeatureQueries, ...roomQueries])
+            .then(() => res.json({ success: true }))
+            .catch(err => {
+                console.error('Error updating related tables:', err);
+                res.status(500).json({ success: false, message: 'Error updating related tables' });
+            });
+    });
+});
+
+
+
+
+
+// Get logged-in user ID
+app.get('/get-user-id', (req, res) => {
+    if (req.session && req.session.user) {
+        res.json({ user_id: req.session.user.user_id });
+    } else {
+        res.status(401).json({ message: 'Not logged in' });
+    }
+});

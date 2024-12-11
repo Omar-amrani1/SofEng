@@ -8,13 +8,14 @@ document.getElementById('registerForm')?.addEventListener('submit', function (e)
     const contactInfo = document.getElementById('contactInfo').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
 
     fetch('/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, contactInfo, email, password }),
+        body: JSON.stringify({ name, contactInfo, email, password, role }),
     })
         .then((response) => response.json())
         .then((data) => {
@@ -46,7 +47,7 @@ document.getElementById('loginForm')?.addEventListener('submit', function (e) {
         .then((data) => {
             if (data.success) {
                 alert('Login successful!');
-                window.location.href = '/home.html';
+                window.location.href = data.redirectUrl; // Redirect based on role
             } else {
                 alert('Invalid email or password');
             }
@@ -54,21 +55,20 @@ document.getElementById('loginForm')?.addEventListener('submit', function (e) {
         .catch((error) => console.error('Error:', error));
 });
 
-// Fetch properties from the server
-// Handle property filtering and display
+// Fetch properties from the server and display them
 document.addEventListener('DOMContentLoaded', () => {
     const fetchProperties = (filters = {}) => {
         const query = new URLSearchParams(filters).toString();
         fetch(`/properties?${query}`)
-            .then(response => response.json())
-            .then(properties => {
+            .then((response) => response.json())
+            .then((properties) => {
                 const propertyContainer = document.getElementById('properties-container');
                 propertyContainer.innerHTML = ''; // Clear existing content
 
                 if (properties.length === 0) {
                     propertyContainer.innerHTML = '<p>No properties match your filters.</p>';
                 } else {
-                    properties.forEach(property => {
+                    properties.forEach((property) => {
                         const propertyCard = document.createElement('div');
                         propertyCard.className = 'property-card';
                         propertyCard.innerHTML = `
@@ -81,15 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             })
-            .catch(error => console.error('Error fetching properties:', error));
+            .catch((error) => console.error('Error fetching properties:', error));
     };
 
     // Initial fetch without filters
     fetchProperties();
 
     // Apply filters when the button is clicked
-    const applyFiltersButton = document.getElementById('apply-filters').addEventListener('click', () => {
-        
+    document.getElementById('apply-filters')?.addEventListener('click', () => {
         const location = document.getElementById('filter-location').value;
         const priceRange = document.getElementById('filter-price').value;
 
@@ -101,11 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// View details for property
-function viewDetails(propertyId,userId=-1) {
-    const params = new URLSearchParams(window.location.search)
-    const userId = params.get("user")
-    window.location.href = `/property-details.html?id=${propertyId}&user=${userId}`;
-    //User is "null" if not used
+// Placeholder for viewing property details
+function viewDetails(propertyId) {
+    window.location.href = `/property-details.html?id=${propertyId}`;
 }
 
