@@ -5,39 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .property-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .filters {
-            margin: 20px;
-        }
-
-        .filters label, .filters select {
-            margin-right: 10px;
-        }
-
-        #apply-filters {
-            padding: 5px 15px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-    </style>
 </head>
 <body>
     <h1>Available Properties</h1>
@@ -46,23 +13,12 @@
         <h2>Filter Properties</h2>
         <div>
             <label for="filter-location">Location:</label>
-            <select id="filter-location">
-                <option value="">All</option>
-                <option value="Birmingham">Birmingham</option>
-                <option value="London">London</option>
-                <option value="Manchester">Manchester</option>
-                <option value="Liverpool">Liverpool</option>
-            </select>
+            <input id=filter-location></input>
         </div>
 
         <div>
             <label for="filter-price">Price:</label>
-            <select id="filter-price">
-                <option value="">All</option>
-                <option value="400-700">400 - 700</option>
-                <option value="701-1000">701 - 1000</option>
-                <option value="1001-1500">1001 - 1500</option>
-            </select>
+            <input id=filter-price></input>
         </div>
 
         <button id="apply-filters">Apply Filters</button>
