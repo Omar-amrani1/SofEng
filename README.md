@@ -35,3 +35,8 @@ Mess around with "styles.css" to make pages look nicer (may need to add html con
 Replace sent password with SHA-256 hash in script.js ; Add table in sql for storing hash to compare
 
 Create the 'landlord_property' table mentioned in the EDR ; Branch from logon script ('/login' fetch in script.js) depending on if landlord or regular user
+
+
+### First testing done
+
+Some performance results are shown in testing_scripts/first_test_result/k6_test_logs.txt
